@@ -1,6 +1,7 @@
 package com.akshay.tmdbclient.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.akshay.tmdbclient.R;
 import com.akshay.tmdbclient.adapter.MovieAdapter;
+import com.akshay.tmdbclient.databinding.ActivityMainBinding;
 import com.akshay.tmdbclient.model.Movie;
 import com.akshay.tmdbclient.model.MovieDBResponse;
 import com.akshay.tmdbclient.service.MovieDataService;
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private MovieAdapter movieAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private MainActivityViewModel mainActivityViewModel;
+    private ActivityMainBinding activityMainBinding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +47,14 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("TMDB Popular Movies Today");
 
+        activityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
 
         getPopularMovie();
 
-        swipeRefreshLayout = findViewById(R.id.swipe_layout);
+        swipeRefreshLayout = activityMainBinding.swipeLayout;
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -75,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showOnRecyclerView() {
 
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = activityMainBinding.recyclerView;
         movieAdapter = new MovieAdapter(this, movies);
 
         if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
