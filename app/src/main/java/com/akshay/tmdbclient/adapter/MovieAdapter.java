@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.paging.PagedList;
+import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.akshay.tmdbclient.R;
@@ -20,14 +22,14 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
+public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.MovieViewHolder> {
 
     private Context context;
-    private ArrayList<Movie> moviesArrayList;
 
-    public MovieAdapter(Context context, ArrayList<Movie> moviesArrayList) {
+    public MovieAdapter(Context context) {
+        super(Movie.CALLBACK);
         this.context = context;
-        this.moviesArrayList = moviesArrayList;
+
     }
 
     @NonNull
@@ -42,18 +44,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
 
-        Movie movie = moviesArrayList.get(position);
-
+        Movie movie = getItem(position);
 
         holder.movieListItemBinding.setMovie(movie);
-
-
     }
 
-    @Override
-    public int getItemCount() {
-        return moviesArrayList.size();
-    }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
 
@@ -70,13 +65,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
                     int position = getAdapterPosition();
 
                     if(position!= RecyclerView.NO_POSITION){
-                        Movie selectMovie = moviesArrayList.get(position);
+                        Movie selectMovie = getItem(position);
 
                         Intent intent = new Intent(context, MovieActivity.class);
                         intent.putExtra("movie", selectMovie);
                         context.startActivity(intent);
-
-
 
                     }
                 }

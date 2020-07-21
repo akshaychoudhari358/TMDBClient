@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.paging.PagedList;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,7 +33,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Movie> movies;
+    private PagedList<Movie> movies;
     private RecyclerView recyclerView;
     private MovieAdapter movieAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -66,10 +67,18 @@ public class MainActivity extends AppCompatActivity {
 
     public void getPopularMovie(){
 
-        mainActivityViewModel.getAllMovie().observe(this, new Observer<List<Movie>>() {
+//        mainActivityViewModel.getAllMovie().observe(this, new Observer<List<Movie>>() {
+//            @Override
+//            public void onChanged(List<Movie> moviesFromLiveData) {
+//                movies = (ArrayList<Movie>) moviesFromLiveData;
+//                showOnRecyclerView();
+//            }
+//        });
+
+        mainActivityViewModel.getMoviesPagedList().observe(this, new Observer<PagedList<Movie>>() {
             @Override
-            public void onChanged(List<Movie> moviesFromLiveData) {
-                movies = (ArrayList<Movie>) moviesFromLiveData;
+            public void onChanged(PagedList<Movie> moviesFromLiveData) {
+                movies = moviesFromLiveData;
                 showOnRecyclerView();
             }
         });
@@ -82,7 +91,8 @@ public class MainActivity extends AppCompatActivity {
     private void showOnRecyclerView() {
 
         recyclerView = activityMainBinding.recyclerView;
-        movieAdapter = new MovieAdapter(this, movies);
+        movieAdapter = new MovieAdapter(this);
+        movieAdapter.submitList(movies);
 
         if(this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
